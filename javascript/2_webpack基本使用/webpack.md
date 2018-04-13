@@ -341,3 +341,79 @@ server.listen(5000, 'localhost', ()=> {
 
     ```
 4. 执行npm run dev
+
+
+14. 继12 实现Webpack Hot Middleware中的热加载
+
+> npm install --save-dev webpack-hot-middleware
+
+
+1. 在plugins添加 new webpack.HotModuleReplacementPlugin()
+
+2. 在server.js中添加
+    ```javascript
+    // 告诉express去使用webpack-dev-middleware和 webpack.config.js
+    app.use(webpackDevMiddleware(compiler, {
+      pulicPath: config.output.publicPath,
+    }))
+    
+    // 添加这一句就可以实现热加载
+    app.use(require("webpack-hot-middleware")(compiler))
+    
+    
+    ```
+    
+3. 在webpack.config.js
+
+```javascript
+
+var hotMiddlewareScript = 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true'
+
+module.exports = {
+  entry: {
+    app: ['./src/index.js', hotMiddlewareScript],
+    print: ['./src/print.js', hotMiddlewareScript]
+    // app: './src/index.js',
+    // print: './src/print.js'
+  },
+  plugins: [
+ 
+    // dev-server需要的热加载
+    new webpack.HotModuleReplacementPlugin(),
+  ]
+}
+```
+
+
+完整的server代码
+```javascript
+
+const express = require('express')
+const webpack = require('webpack')
+const webpackDevMiddleware = require('webpack-dev-middleware')
+
+
+const app = express()
+const config = require('./webpack.config')
+
+
+const compiler = webpack(config)
+
+
+// 告诉express去使用webpack-dev-middleware和 webpack.config.js
+app.use(webpackDevMiddleware(compiler, {
+  pulicPath: config.output.publicPath,
+}))
+
+// 添加这一句就可以实现热加载
+app.use(require("webpack-hot-middleware")(compiler))
+
+
+app.listen(3000, function () {
+  console.log('app listening on port 3000!\n')
+})
+
+```
+
+
+4. npm run server => 访问localhost:3000即可

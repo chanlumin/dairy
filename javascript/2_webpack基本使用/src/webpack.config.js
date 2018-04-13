@@ -3,10 +3,14 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const webpack = require('webpack')
 
+var hotMiddlewareScript = 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true'
+
 module.exports = {
   entry: {
-    app: './src/index.js',
-    print: './src/print.js'
+    app: ['./src/index.js', hotMiddlewareScript],
+    print: ['./src/print.js', hotMiddlewareScript],
+    // app: './src/index.js',
+    // print: './src/print.js'
   },
   devtool: 'inline-source-map',
   devServer: {
@@ -39,7 +43,6 @@ module.exports = {
     //看哪些依赖被添加进去
     new webpack.NamedModulesPlugin(),
     // dev-server需要的热加载
-    new webpack.HotModuleReplacementPlugin()
-
+    new webpack.HotModuleReplacementPlugin(),
   ]
 }
