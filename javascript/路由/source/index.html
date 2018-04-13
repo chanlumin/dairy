@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>前端路由</title>
+</head>
+<body>
+  <ul>
+    <!-- hash值就是href对应的 => #/ -->
+    <li><a href="#/">/</a></li>
+    <li><a href="#/home">主页</a></li>
+    <li><a href="#/about">详情页</a></li>
+  </ul>
+</body>
+
+
+
+<script>
+
+
+  // 1 定义Router routes 和 currentUrl
+  // 2 routes 里面包含的不同hash值 所对应的回调函数
+  // 3 定义refresh 每当hash值改变的时候就调用routes中对应的route[hash] 中对应的回调函数
+  // 4 init函数 监听load事件和 hashchange事件  页面载入的时候和页面url改变的时候都要执行不同route的回调函数
+  function Router() {
+    this.routes = {}
+    this.currentUrl = ''
+  }
+
+// path就是hash值 callback 不同hash值所对应的回调函数 
+Router.prototype.route = function(path, callback) {
+  this.routes[path] = callback || function() {}
+}
+
+
+Router.prototype.refresh = function() {
+  // location是window的一个属性
+  console.log(location.hash)
+  this.currentUrl = location.hash.slice(1) || '/'
+  console.log('this.currentUrl: ' + this.currentUrl)
+  
+  //  url地址有改变的话就触发 refresh函数 并且调用 routes中对应的回调函数
+  this.routes[this.currentUrl]()
+}
+
+
+Router.prototype.init = function() {
+  window.addEventListener('load',this.refresh.bind(this), false)
+  // url的片段标识符 改变了之后 就会触发hashchagne 注意这个是hashchange 而不是haschange
+  window.addEventListener('hashchange', this.refresh.bind(this), false)
+}
+
+
+window.Router = new Router();
+window.Router.init()
+
+
+
+var bd = document.querySelector('body') 
+
+Router.route('/', function(){
+  console.log('首页')
+})
+
+Router.route('/home', function() {
+   console.log("home页面")
+})
+
+Router.route('/about', function() {
+  console.log('这是详情页')
+})
+
+</script>
+</html>
