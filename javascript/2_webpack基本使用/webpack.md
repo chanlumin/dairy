@@ -227,6 +227,117 @@ module.exports = {
 }
 
 ```
+12. 配置webpack-dev-middleware
+
+
+> npm install --save-dev express webpack-dev-middleware
+
+- 在output中添加 publicPath : '/'
+    ```javascript
+      output : {
+        filename: '[name].bundle.js'
+        publicPath: '/'
+      }
+    ```
+- 在根目录添加server.js
+    ```javascript
+      const express = require('express')
+      const webpack = require('webpack')
+      const webpackDevMiddleware = require('webpack-dev-middleware')
+      
+      
+      const app = express()
+      const config = require('./webpack.config')
+      const compiler = webpack(config)
+      
+      
+      // 告诉express去使用webpack-dev-middleware和 webpack.config.js 
+      app.use(webpackDevMiddleware(compiler, {
+        pulicPath: config.output.publicPath
+      }))
+      
+      
+      app.listen(3000, function () {
+        console.log('app listening on port 3000!\n')
+      })
+
+    ```
+- 在package.json添加 server这一行
+    ```javascript
+      {
+        "name": "src",
+        "version": "1.0.0",
+        "description": "webpack 使用",
+        "main": "index.js",
+        "scripts": {
+          "test": "echo \"Error: no test specified\" && exit 1",
+          "build": "webpack",
+          "watch": "webpack --watch",
+          "start": "webpack-dev-server --open",
+          "server": "node server.js"
+        }
+      }
+
+    ```
+    
+- 执行=>  npm run server
+
+> 上面的server没有热加载功能
+
+
+12. dev-server 热加载
+
+1. 在webpack.config.js添加webpak 和 hot 和 plugins那两行
+    ```javascript
+    
+     const webpack = require('webpack')
+     
+     module.exports = {
+       devServer: {
+         // dist文件改变的话就自动刷新浏览器
+         contentBase: './dist',
+         hot: true
+       },
+       plugins: [
+         new webpack.NamedModulesPlugin(),
+         // dev-server需要的热加载
+         new webpack.HotModuleReplacementPlugin()
+     
+       ]
+     }
+    ```
+    
+2. 根目录添加dev-server.js
+```javascript
+
+const webpackDevServer = require('webpack-dev-server')
+const webpack = require('webpack')
 
 
 
+const config = require('./webpack.config.js')
+const options = {
+  contentBase: './dist',
+  hot: true,
+  host: 'localhost'
+}
+
+webpackDevServer.addDevServerEntrypoints(config, options)
+const compiler = webpack(config)
+
+
+const server = new webpackDevServer(compiler, options)
+
+
+server.listen(5000, 'localhost', ()=> {
+  console.log('dev server listening on port 5000')
+})
+
+```
+
+3. 在package.json 的scripts中添加
+    ```javascript
+      "dev": "node dev-server.js"
+
+    ```
+4. 执行npm run dev
