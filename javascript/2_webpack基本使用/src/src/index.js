@@ -1,4 +1,5 @@
 import printMe from './print'
+import './style.css'
 class Rectangle {
   // constructor
   constructor(height, width) {
@@ -30,6 +31,8 @@ function component() {
   btn.onclick = printMe
 
   element.appendChild(btn)
+
+  element.classList.add('hello')
 
   return element
 }

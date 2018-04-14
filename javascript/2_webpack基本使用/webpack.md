@@ -416,4 +416,38 @@ app.listen(3000, function () {
 ```
 
 
-4. npm run server => 访问localhost:3000即可
+4. npm run server => 访问localhost:3000
+
+
+
+13. 添加CSS loader
+> npm install --save-dev style-loader css-loader
+> 这样在js中css就可以被作为模块化被import进去 并且自动被注入index.html中
+
+```javascript
+
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          'css-loader'
+        ]
+      }
+    ]
+  }
+}
+```
+
+14. 添加图片和字体loader
+
+> npm install --save-dev file-loader
+
+```javascript
+
+```
+
+
+
