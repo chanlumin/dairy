@@ -137,6 +137,14 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       title: 'HtmlWebpackPlugin'
+    }),
+    // 可以生成不同的html模板
+    new HtmlWebpackPlugin({
+      //指定
+      filename: 'test.html',
+      template: 'src/test.html',
+      // 决定使用哪个js为难
+      chunks: ['app']
     })
   ]
 }
@@ -445,8 +453,25 @@ module.exports = {
 
 > npm install --save-dev file-loader
 
+在module中中添加
 ```javascript
 
+[
+    {
+      test:  /\.(png|svg|jpg|gif)$/,
+      use: [
+        'file-loader'
+      ]
+    },
+    {
+      test: /\.(woff|woff2|eot|ttf|otf)$/,
+      use: [
+        'file-loader'
+      ]
+    }
+]
+ 
+ 
 ```
 
 
